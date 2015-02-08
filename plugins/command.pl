@@ -47,6 +47,11 @@ hook => {
 	}
 },
 strings => {
+	fun => {
+		json => {
+			access_required => "{success:\x04false\x04,error:\"Not enough access.\",required:{required},yours:{yours}}"
+		}
+	},
 	en => {
 		us => {
 			access_required => 'You don\'t have enough access to use this command. [Required {required}] [You {yours}]'

@@ -85,19 +85,33 @@ commands => {
 	},
 },
 strings => {
+	fun => {
+		json => {
+			logged_out => "{success:\x04true\x04}",
+			logged_in => "{success:\x04true\x04,name:\"{name}\",access:{access}}",
+			not_logged_in => "{success:\x04false\x04,error:\"\x04Not logged in\x04\"}",
+			already_logged_in => "{success:\x04false\x04,error:\"\x04Already logged in\x04\",name:\"{name}\"}",
+			new_account => "{success:\x04true\x04,id:{id},access:{access}}",
+			new_account_fail => "{success:\x04fail\x04,error:\"unknown\"}",
+			no_account => "{success:\x04fail\x04,error:\"Unrecognized nick.\"}",
+			wrong_password => "{success:\x04fail\x04,error:\"Wrong password.\"}",
+			name_change => "{success:\x04true\x04,old:\"{oldname}\",new:\"{newname}\"}",
+			password_change => "{success:\x04true\x04}",
+		}
+	},
 	en => {
-	 us => {
-	 	logged_out => 'Logged out.',
-	 	logged_in => 'Logged in as {name}, access {access}.',
-		not_logged_in => 'You\'re not currently logged in.',
-		already_logged_in => 'You\'re already logged in as {name}.',
-		new_account => 'Successfully created a new account with ID {id}, access {access}.',
-		new_account_fail => 'Problem when creating account. Complain to the creator of this bot.',
-		no_account => 'It doesn\'t seem like you have an account connected to this nickname. Maybe you meant to use the register command instead?',
-		wrong_password => 'Wrong Password.',
-		name_change => 'Name changed from {oldname} to {newname}.',
-		password_change => 'Password updated.',
-	 }
+		us => {
+			logged_out => 'Logged out.',
+			logged_in => 'Logged in as {name}, access {access}.',
+			not_logged_in => 'You\'re not currently logged in.',
+			already_logged_in => 'You\'re already logged in as {name}.',
+			new_account => 'Successfully created a new account with ID {id}, access {access}.',
+			new_account_fail => 'Problem when creating account. Complain to the creator of this bot.',
+			no_account => 'It doesn\'t seem like you have an account connected to this nickname. Maybe you meant to use the register command instead?',
+			wrong_password => 'Wrong Password.',
+			name_change => 'Name changed from {oldname} to {newname}.',
+			password_change => 'Password updated.',
+		}
 	},
 },
 utilities => {
