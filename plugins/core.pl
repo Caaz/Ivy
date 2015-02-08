@@ -19,6 +19,16 @@ commands => {
 			$u{prism}{msg}($handle,$$irc{where},'core.reloaded',{seconds => time-$start,errors => (@errors+0)});
 			for(@errors) { $u{prism}{msg}($handle,$$irc{where},'core.plugin_error',$_); }
 		}
+	},
+	'refresh' => {
+		access => 3,
+		code => sub {
+			my ($handle,$irc) = splice @_,0,2;
+			my $start = time;
+			my @errors = @{ $u{core}{refresh}() };
+			$u{prism}{msg}($handle,$$irc{where},'core.reloaded',{seconds => time-$start,errors => (@errors+0)});
+			for(@errors) { $u{prism}{msg}($handle,$$irc{where},'core.plugin_error',$_); }
+		}
 	}
 },
 strings => {
@@ -30,5 +40,6 @@ strings => {
 	}
 },
 utilities => {
- reload => sub { save(); my $array = loadPlugins(); plugins(['load']); return $array; }
+ reload => sub { save(); my $array = loadPlugins(); plugins(['load']); return $array; },
+ refresh => sub { delete $ivy{lastUpdated}; delete $ivy{plugin}; save(); my $array = loadPlugins(); plugins(['load']); return $array; }
 },
