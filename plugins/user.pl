@@ -7,13 +7,13 @@ commands => {
 			my $password = $+{password};
 			my $id = $u{user}{get}($$irc{nick},$$irc{user},$network);
 			if($id != -1) {
-				my $user = $ivy{data}{user}{db}[ $id ];
+				my $user = $$data{db}[ $id ];
 				$u{prism}{msg}($handle,$$irc{where},'user.already_logged_in',{name=>$$user{name},access=>$$user{access}});
 			}
 			else {
 				$id = $u{user}{new}($$irc{nick},$$irc{user},$network,$password);
 				if($id != -1) {
-					my $user = $ivy{data}{user}{db}[ $id ];
+					my $user = $$data{db}[ $id ];
 					$u{prism}{msg}($handle,$$irc{where},'user.new_account',{id=>$id,access=>$$user{access}});
 				}
 				else {
@@ -28,13 +28,13 @@ commands => {
 			my $password = $+{password};
 			my $id = $u{user}{get}($$irc{nick},$$irc{user},$network);
 			if($id != -1) {
-				my $user = $ivy{data}{user}{db}[ $id ];
+				my $user = $$data{db}[ $id ];
 				$u{prism}{msg}($handle,$$irc{where},'user.already_logged_in',{name=>$$user{name},access=>$$user{access}});
 			}
 			else {
 				$id = $u{user}{login}($$irc{nick},$$irc{user},$network,$password);
 				if($id > -1) {
-					my $user = $ivy{data}{user}{db}[ $id ];
+					my $user = $$data{db}[ $id ];
 					$u{prism}{msg}($handle,$$irc{where},'user.logged_in',{id=>$id,access=>$$user{access}});
 				}
 				elsif($id == -1) { $u{prism}{msg}($handle,$$irc{where},'user.no_account'); }
@@ -42,11 +42,26 @@ commands => {
 			}
 		}
 	},
+	'logout' => {
+		code => sub {
+			my ($handle,$irc,$data,$tmp,$network) = splice @_,0,5;
+			my $password = $+{password};
+			my $id = $u{user}{get}($$irc{nick},$$irc{user},$network);
+			if($id != -1) {
+				my $user = $$data{db}[ $id ];
+				$u{prism}{msg}($handle,$$irc{where},'user.logged_out');
+				delete $$data{db}[ $id ]{online};
+			}
+			else { $u{prism}{msg}($handle,$$irc{where},'user.not_logged_in'); }
+		}
+	},
 },
 strings => {
 	en => {
 	 us => {
+	 	logged_out => 'Logged out.',
 	 	logged_in => 'Logged in as {name}, access {access}.',
+		not_logged_in => 'You\'re not currently logged in.',
 		already_logged_in => 'You\'re already logged in as {name}.',
 		new_account => 'Successfully created a new account with ID {id}, access {access}.',
 		new_account_fail => 'Problem when creating account. Complain to the creator of this bot.',

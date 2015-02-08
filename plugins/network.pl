@@ -13,14 +13,25 @@ hook => {
 	irc => sub {
 		my ($data,$tmp,$handle,$msg) = splice @_,0,4;
 		print "$msg\n";
+		my $network = $u{network}{valueByHandle}($handle);
 		if($msg =~ /^\:Nickserv\!.+? NOTICE .+ \:This nickname is registered/i) {
-			my $network = $u{network}{valueByHandle}($handle);
 			raw($handle,'PRIVMSG Nickserv :id '.$$network{nickserv}) if($$network{nickserv});
-			raw($handle,'JOIN #TheFission');
 		}
+		elsif($msg =~ /^\:.+? INVITE .+? :(.+)/i) {
+			$u{network}{autojoinAdd}($handle,$network,$1);
+		}
+		elsif((split /\s+/, $msg)[1] =~ /001/) { raw($handle,'JOIN '.(join ",",@{ $$network{autojoin} })) if($$network{autojoin}); }
 	}
 },
 utilities => {
+	autojoinAdd => sub {
+		# I: Handle, Network Value, Channel.
+		my ($handle,$network,$channel) = splice @_,0,3;
+		unless(($$network{autojoin}) && ($channel ~~ @{ $$network{autojoin} })) {
+			push(@{ $$network{autojoin} },$channel);
+			raw($handle,"JOIN :$channel");
+		}
+	},
 	valueByHandle => sub {
 		my $handle = shift;
 		for my $con (keys %{ $ivy{connection} }) { return $ivy{data}{network}{$con} if($ivy{connection}{$con} == $handle); }

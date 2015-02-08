@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use warnings; use strict; use Cwd 'abs_path'; use IO::Select; use IO::Socket; use JSON;
 no warnings "experimental"; # You can't tell me how to live my life.
-my %ivy = ('debug'=>0, 'select'=>IO::Select->new()); my %u; goLocal(); load(); loadPlugins(); plugins(['load','begin','connect']);
+my %ivy = ('debug'=>1, 'select'=>IO::Select->new()); my %u; goLocal(); load(); loadPlugins(); plugins(['load','begin','connect']);
 while(1) {
 	plugins(['tick']);
 	for my $fh ($ivy{select}->can_read(1)) {
@@ -45,13 +45,12 @@ sub loadPlugins {
 	return \@errors;
 }
 sub plugins {
-	my ($actions,$args,@errors) = (shift,shift,[]);
+	my ($actions,$args) = (shift,shift); my @errors;
 	for my $action (@{ $actions }) {
-		print "+ plugins $action\n" if $ivy{debug};
 		for my $key (keys %{ $ivy{plugin} }) { 
 			for my $type ('data','tmp') { %{$ivy{data}{$key}} = () if(!$ivy{data}{$key}); }
 			eval { $ivy{plugin}{$key}{hook}{$action}($ivy{data}{$key},$ivy{tmp}{$key},@{$args}) if $ivy{plugin}{$key}{hook}{$action}; }; 
-			if($@) { push(@errors,{error=>$@,plugin=>$key}); print $@; }
+			if($@) { push(@errors,{error=>$@,plugin=>$key}); warn $@; }
 		}
 	}
 	return \@errors;

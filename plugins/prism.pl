@@ -1,4 +1,46 @@
 required => 1,
+commands => {
+	'setColors (?<colors>.+)' => {
+		code => sub {
+			my ($handle,$irc) = splice @_,0,2;
+			if($u{prism}{setColors}($$irc{where},$+{colors})) {
+				$u{prism}{msg}($handle,$$irc{where},'prism.colors_set',{where=>$$irc{where}});
+			}
+			else {
+				$u{prism}{msg}($handle,$$irc{where},'prism.colors_failed');
+			}
+		}
+	},
+	'setLanguage (?<lang>.+)' => {
+		code => sub {
+			my ($handle,$irc) = splice @_,0,2;
+			if($u{prism}{setLang}($$irc{where},$+{colors})) {
+				$u{prism}{msg}($handle,$$irc{where},'prism.language_set',{where=>$$irc{where}});
+			}
+			else {
+				$u{prism}{msg}($handle,$$irc{where},'prism.language_failed');
+			}
+		}
+	},
+},
+strings => {
+	fun => {
+		'1337' => {
+			colors_set => 'Colors set for {where}!',
+			colors_failed => 'Colors set failed. The format is 00,00!',
+			language_set => 'Language set for {where}!',
+			language_failed => 'Language set failed. The format is en-us!',
+		}
+	},
+	en => {
+		us => {
+			colors_set => 'Colors set for {where}!',
+			colors_failed => 'Colors set failed. The format is 00,00!',
+			language_set => 'Language set for {where}!',
+			language_failed => 'Language set failed. The format is en-us!',
+		}
+	}
+},
 hook => {
 	begin => sub {
 		my $data = shift;
@@ -20,7 +62,7 @@ utilities => {
 		# << sets default
 		my ($target,$message) = splice @_,0,2;
 		my @c = @{ $u{prism}{getColors}($target) };
-		for my $regex ('((?:\x23|\@)\w)','([a-z]+:\/\/\S+\.[a-z]{2,6}\/?(?:[\/\w=?]+)?)') { $message =~ s/$regex/\cC$c[1]$1\cC$c[0]/g; }
+		#for my $regex ('((?:\x23|\@)\w)','([a-z]+:\/\/\S+\.[a-z]{2,6}\/?(?:[\/\w=?]+)?)') { $message =~ s/$regex/\cC$c[1]$1\cC$c[0]/g; }
 		my $color = 1;
 		while ($message =~ s/\x04/\cC$c[$color]/) { $color = ($color)?0:1; }
 		$message =~ s/\cC\d{1,2}\s+?(\cC\d{1,2})/$1/g;
@@ -43,7 +85,7 @@ utilities => {
 	setLanguage => sub {
 		# I: Target, String to be parsed.
 		# O: T/F
-		my ($target,$string) = splice @_,0,2; my @colors = split '-', $string;
+		my ($target,$string) = splice @_,0,2; my @colors = split /\-/, $string;
 		while(@colors>2) { pop @colors; }
 		@{ $ivy{data}{prism}{lang}{$target} } = @colors;
 		return 1;
@@ -51,7 +93,7 @@ utilities => {
 	setColors => sub {
 		# I: Target, String to be parsed.
 		# O: T/F
-		my ($target,$string) = splice @_,0,2; my @colors = split ',', $string;
+		my ($target,$string) = splice @_,0,2; my @colors = split /\,/, $string;
 		while(@colors>2) { pop @colors; }
 		for(@colors) { 
 			if($_ !~ /^\d+$/) { return 0; }
