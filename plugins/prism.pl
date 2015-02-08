@@ -24,14 +24,6 @@ commands => {
 	},
 },
 strings => {
-	fun => {
-		'1337' => {
-			colors_set => 'Colors set for {where}!',
-			colors_failed => 'Colors set failed. The format is 00,00!',
-			language_set => 'Language set for {where}!',
-			language_failed => 'Language set failed. The format is en-us!',
-		}
-	},
 	en => {
 		us => {
 			colors_set => 'Colors set for {where}!',

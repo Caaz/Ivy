@@ -5,7 +5,7 @@ hook => {
 		if(!(keys %{ $data })) {
 			print "(network) You don't seem to have any networks set up. Let's create one.\n";
 			$u{network}{create}();
-			print "The rest of setup is handled via IRC. For more info view the readme.\n";
+			print "The rest of setup is handled via IRC. For more info tell Caaz to write a readme.\n";
 			print encode_json($data);
 		}
 		for $key (keys %{ $data }) { $u{network}{connect}($key); }

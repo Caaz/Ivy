@@ -48,7 +48,7 @@ sub plugins {
 	my ($actions,$args) = (shift,shift); my @errors;
 	for my $action (@{ $actions }) {
 		for my $key (keys %{ $ivy{plugin} }) { 
-			for my $type ('data','tmp') { %{$ivy{data}{$key}} = () if(!$ivy{data}{$key}); }
+			for my $type ('data','tmp') { %{$ivy{$type}{$key}} = () if(!$ivy{$type}{$key}); }
 			eval { $ivy{plugin}{$key}{hook}{$action}($ivy{data}{$key},$ivy{tmp}{$key},@{$args}) if $ivy{plugin}{$key}{hook}{$action}; }; 
 			if($@) { push(@errors,{error=>$@,plugin=>$key}); warn $@; }
 		}
