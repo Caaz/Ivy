@@ -17,20 +17,25 @@ hook => {
 		if($msg =~ /^\:Nickserv\!.+? NOTICE .+ \:This nickname is registered/i) {
 			raw($handle,'PRIVMSG Nickserv :id '.$$network{nickserv}) if($$network{nickserv});
 		}
-		elsif($msg =~ /^\:.+? INVITE .+? :(.+)/i) {
-			$u{network}{autojoinAdd}($handle,$network,$1);
-		}
+		elsif($msg =~ /^\:.+? INVITE .+? \:(.+)/i) { $u{network}{autojoinAdd}($handle,$network,$1); }
+		elsif($msg =~ /^\:.+? KICK (.+?) $$network{nickname} \:.+?$/i) { $u{network}{autojoinDel}($handle,$network,$1); }
 		elsif((split /\s+/, $msg)[1] =~ /001/) { raw($handle,'JOIN '.(join ",",@{ $$network{autojoin} })) if($$network{autojoin}); }
 	}
 },
 utilities => {
+	autojoinDel => sub {
+		my ($handle,$network,$channel) = splice @_,0,3;
+		if($channel ~~ @{ $$network{autojoin} }) {
+			@{ $$network{autojoin} } = grep(!/$channel/i,@{ $$network{autojoin} });
+			save();
+		}
+	},
 	autojoinAdd => sub {
 		# I: Handle, Network Value, Channel.
 		my ($handle,$network,$channel) = splice @_,0,3;
-		unless(($$network{autojoin}) && ($channel ~~ @{ $$network{autojoin} })) {
-			push(@{ $$network{autojoin} },$channel);
-			raw($handle,"JOIN :$channel");
-		}
+		raw($handle,"JOIN $channel");
+		push(@{ $$network{autojoin} },$channel) unless(($$network{autojoin}) && ($channel ~~ @{ $$network{autojoin} }));
+		save();
 	},
 	valueByHandle => sub {
 		my $handle = shift;
