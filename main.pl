@@ -5,12 +5,14 @@ my %ivy = ('debug'=>0, 'select'=>IO::Select->new()); my %u; goLocal(); load(); l
 while(1) {
 	plugins(['tick']);
 	for my $fh ($ivy{select}->can_read(1)) {
-		my $rawmsg = readline($fh); $rawmsg =~ s/\n|\r//g; plugins(['irc'],[$fh,$rawmsg]);
-		if(!$rawmsg) { plugins(['disconnected'],[$fh]); $ivy{select}->remove($fh); $fh->close; next; } elsif($rawmsg =~ /^PING(.+)$/i) { raw($fh,"PONG$1"); save(); }
+		my $rawmsg = readline($fh);
+		if(!$rawmsg) { plugins(['disconnected'],[$fh]); $ivy{select}->remove($fh); $fh->close; next; }
+		$rawmsg =~ s/\n|\r//g; plugins(['irc'],[$fh,$rawmsg]);
+		if($rawmsg =~ /^PING(.+)$/i) { raw($fh,"PONG$1"); save(); }
 	}
 }
 sub loadPlugins {
-	my ($d,@errors) = ($ivy{debug},[]);
+	my $d = ($ivy{debug}); my @errors;
 	for my $dir ('plugins','plugins.local') {
 		mkdir($dir) if(!-e $dir);
 		print "Checking $dir\n" if $d;
@@ -20,7 +22,7 @@ sub loadPlugins {
 				$ivy{lastUpdated}{$key} = $time;
 				print "- Loading $file\n" if $d; my %plugin;
 				open PLUGIN, "<$file"; eval('%plugin = ('.(join "", <PLUGIN>).');'); close PLUGIN;
-				if($@) { warn "- $@"; push(@errors,{message=>$@,plugin=>$key}); }
+				if($@) { warn $@; push(@errors,{message=>$@,plugin=>$key}); }
 				else { print "- $key loaded.\n" if $d; $ivy{plugin}{$key} = \%plugin; }
 			}
 		}

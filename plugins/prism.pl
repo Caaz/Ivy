@@ -9,8 +9,8 @@ utilities => {
 	msg => sub {
 		# I: Handle, Target, plugin, String Key, data.
 		my ($handle,$target,$key,$hash) = splice @_,0,5;
-		print "Got $target, $key";
 		my $string =  $u{prism}{getString}($target,$key);
+		for(values %{ $hash }) { $_ =~ s/\n|\r//g;}
 		$string =~ s/\{(\w+)\}/\x04$$hash{$1}\x04/g;
 		raw($handle,"PRIVMSG $target :".$u{prism}{colorize}($target,$string));
 	},

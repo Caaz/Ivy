@@ -1,5 +1,5 @@
 required => 1,
-prereq => { plugins => ['user'] }
+prereq => { plugins => ['user'] },
 hook => {
 	begin => sub {
 		my $data = shift;
@@ -18,12 +18,12 @@ hook => {
 			for my $key (keys %{ $ivy{plugin} }) {
 				my $plugin = $ivy{plugin}{$key};
 				for my $regex (keys %{ $$plugin{commands} }) {
-					if($parsed{msg} =~ /^$regex\s*$/i) {
+					if($parsed{msg} =~ /^$prefix$regex\s*$/i) {
 						next if(($$tmp{$parsed{user}}{$regex}) && (time < $$tmp{$parsed{user}}{$regex}));
 						
-						$userID = $u{user}{get}($$irc{nick},$$irc{user},$network);
+						my $userID = $u{user}{get}($parsed{nick},$parsed{user},$network);
 						my $access = ($$plugin{commands}{$regex}{access})?$$plugin{commands}{$regex}{access}:0;
-						next if(($access) (($userID == -1) || ($ivy{data}{user}{db}[ $userID ]{access} < $access)));
+						next if(($access) && (($userID == -1) || ($ivy{data}{user}{db}[ $userID ]{access} > $access)));
 						
 						$$plugin{commands}{$regex}{code}(
 						

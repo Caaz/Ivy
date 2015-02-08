@@ -63,7 +63,7 @@ utilities => {
 		my $recognized = 0;
 		for my $id (0..(@{ $ivy{data}{user}{db} }-1)) {
 			my $user = $ivy{data}{user}{db}[ $id ];
-			if($nick ~~ @{ $$user{recognized} }) {
+			if($nickname ~~ @{ $$user{recognized} }) {
 				$recognized = 1;
 				my $pass = $u{utility}{bcrypt}($password,$$user{password}[1]);
 				if($$pass[0] eq $$user{password}[0]) {
@@ -82,9 +82,9 @@ utilities => {
 		my %account = (
 			access => (($usercount)?1:3),
 			id => $usercount,
-			name => $nick,
+			name => $nickname,
 			password => $u{utility}{bcrypt}($password),
-			recognized => [$nick],
+			recognized => [$nickname],
 			online => { nickname => $nickname, username => $username, network => $network }
 		);
 		push(@{ $ivy{data}{user}{db} },\%account);
