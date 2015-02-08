@@ -10,6 +10,11 @@ hook => {
 		}
 		for $key (keys %{ $data }) { $u{network}{connect}($key); }
 	},
+	discconect => sub {
+		my ($data,$tmp,$handle) = splice @_,0,3;
+		my $key = $u{network}{keyByHandle}($handle);
+		$u{network}{connect}($key) if $key;
+	},
 	irc => sub {
 		my ($data,$tmp,$handle,$msg) = splice @_,0,4;
 		print "$msg\n";

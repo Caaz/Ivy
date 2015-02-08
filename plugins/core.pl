@@ -29,7 +29,24 @@ commands => {
 			$u{prism}{msg}($handle,$$irc{where},'core.refreshed',{seconds => time-$start,errors => (@errors+0)});
 			for(@errors) { $u{prism}{msg}($handle,$$irc{where},'core.plugin_error',$_); }
 		}
-	}
+	},
+	'meta' => {
+		access => 2,
+		code => sub {
+			my ($handle,$irc) = splice @_,0,2;
+			my %meta;
+			my @files = ('main.pl',<plugins/*.pl>,<plugins.local/*.pl>);
+			$meta{files} = @files;
+			foreach(@files) {
+				open NEW, "<".$_;
+				my @lines = <NEW>;
+				$meta{lines} += @lines;
+				foreach(@lines) { $meta{comments}++ if($_ =~ /[^\\]\x23/); }
+				close NEW;
+			}
+		 	$u{prism}{msg}($handle,$$irc{where},'core.meta',\%meta);
+		}
+	},
 },
 strings => {
 	fun => {
@@ -37,6 +54,7 @@ strings => {
 			reloaded => '{seconds:{seconds},errors:{errors}}',
 			refreshed => '{seconds:{seconds},errors:{errors}}',
 			plugin_error => '{plugin:{plugin},message:{message}}',
+			meta => '{files:{files},lines:{lines},comments:{comments}}',
 		}
 	},
 	en => { 
@@ -44,6 +62,7 @@ strings => {
 			reloaded => 'Reloaded. [{seconds} seconds] [{errors} errors]',
 			refreshed => 'Refreshed. [{seconds} seconds] [{errors} errors]',
 			plugin_error => '[{plugin}] {message}',
+			meta => 'Ivy: {files} files. {lines} lines. {comments} comments.',
 		}
 	}
 },
