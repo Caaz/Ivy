@@ -1,5 +1,33 @@
 required => 1,
 commands => {
+	'setName (?<name>.+)' => {
+		code => sub {
+			my ($handle,$irc,$data,$tmp,$network) = splice @_,0,5;
+			my $name = $+{name};
+			my $id = $u{user}{get}($$irc{nick},$$irc{user},$network);
+			if($id != -1) {
+				my $user = $$data{db}[ $id ];
+				$u{prism}{msg}($handle,$$irc{where},'user.name_change',{oldname=>$$user{name},newname=>$name});
+				$$user{name} = $name;
+				save();
+			}
+			else { $u{prism}{msg}($handle,$$irc{where},'user.not_logged_in'); }
+		}
+	},
+	'setPassword (?<password>.+)' => {
+		code => sub {
+			my ($handle,$irc,$data,$tmp,$network) = splice @_,0,5;
+			my $password = $+{password};
+			my $id = $u{user}{get}($$irc{nick},$$irc{user},$network);
+			if($id != -1) {
+				my $user = $$data{db}[ $id ];
+				$u{prism}{msg}($handle,$$irc{where},'user.password_change');
+				$$user{password} = $u{utility}{bcrypt}($password);
+				save();
+			}
+			else { $u{prism}{msg}($handle,$$irc{where},'user.not_logged_in'); }
+		}
+	},
 	'register (?<password>.+)' => {
 		cooldown => 12*60**3,
 		code => sub {
@@ -35,7 +63,7 @@ commands => {
 				$id = $u{user}{login}($$irc{nick},$$irc{user},$network,$password);
 				if($id > -1) {
 					my $user = $$data{db}[ $id ];
-					$u{prism}{msg}($handle,$$irc{where},'user.logged_in',{id=>$id,access=>$$user{access}});
+					$u{prism}{msg}($handle,$$irc{where},'user.logged_in',{name=>$$user{name},id=>$id,access=>$$user{access}});
 				}
 				elsif($id == -1) { $u{prism}{msg}($handle,$$irc{where},'user.no_account'); }
 				elsif($id == -2) { $u{prism}{msg}($handle,$$irc{where},'user.wrong_password'); }
@@ -66,7 +94,9 @@ strings => {
 		new_account => 'Successfully created a new account with ID {id}, access {access}.',
 		new_account_fail => 'Problem when creating account. Complain to the creator of this bot.',
 		no_account => 'It doesn\'t seem like you have an account connected to this nickname. Maybe you meant to use the register command instead?',
-		wrong_password => 'Wrong Password.'
+		wrong_password => 'Wrong Password.',
+		name_change => 'Name changed from {oldname} to {newname}.',
+		password_change => 'Password updated.',
 	 }
 	},
 },

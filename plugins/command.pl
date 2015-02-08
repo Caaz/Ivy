@@ -23,7 +23,10 @@ hook => {
 						
 						my $userID = $u{user}{get}($parsed{nick},$parsed{user},$network);
 						my $access = ($$plugin{commands}{$regex}{access})?$$plugin{commands}{$regex}{access}:0;
-						next if(($access) && (($userID == -1) || ($ivy{data}{user}{db}[ $userID ]{access} > $access)));
+						if(($access) && (($userID == -1) || ($ivy{data}{user}{db}[ $userID ]{access} < $access))) {
+							$u{prism}{msg}($handle,$parsed{where},'command.access_required',{required=>$access,yours=>($userID!=-1)?$ivy{data}{user}{db}[ $userID ]{access}:0});
+							next;
+						}
 						
 						$$plugin{commands}{$regex}{code}(
 						
@@ -39,6 +42,13 @@ hook => {
 					}
 				}
 			}
+		}
+	}
+},
+strings => {
+	en => {
+		us => {
+			access_required => 'You don\'t have enough access to use this command. [Required {required}] [You {yours}]'
 		}
 	}
 }

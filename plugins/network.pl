@@ -18,7 +18,7 @@ hook => {
 			raw($handle,'PRIVMSG Nickserv :id '.$$network{nickserv}) if($$network{nickserv});
 		}
 		elsif($msg =~ /^\:.+? INVITE .+? \:(.+)/i) { $u{network}{autojoinAdd}($handle,$network,$1); }
-		elsif($msg =~ /^\:.+? KICK (.+?) $$network{nickname} \:.+?$/i) { $u{network}{autojoinDel}($handle,$network,$1); }
+		elsif($msg =~ /^\:.+? KICK (.+?) $$network{nickname} \:.+?$/i) { $u{network}{autojoinDel}($handle,$network,$1); }	
 		elsif((split /\s+/, $msg)[1] =~ /001/) { raw($handle,'JOIN '.(join ",",@{ $$network{autojoin} })) if($$network{autojoin}); }
 	}
 },
