@@ -8,7 +8,7 @@ hook => {
 			print "The rest of setup is handled via IRC. For more info view the readme.\n";
 			print encode_json($data);
 		}
-		foreach $key (keys %{ $data }) { $u{network}{connect}($key); }
+		for $key (keys %{ $data }) { $u{network}{connect}($key); }
 	},
 	irc => sub {
 		my ($data,$tmp,$handle,$msg) = splice @_,0,4;
@@ -23,12 +23,12 @@ hook => {
 utilities => {
 	valueByHandle => sub {
 		my $handle = shift;
-		foreach my $con (keys %{ $ivy{connection} }) { return $ivy{data}{network}{$con} if($ivy{connection}{$con} == $handle); }
+		for my $con (keys %{ $ivy{connection} }) { return $ivy{data}{network}{$con} if($ivy{connection}{$con} == $handle); }
 		return 0;
 	},
 	keyByHandle => sub {
 		my $handle = shift;
-		foreach my $con (keys %{ $ivy{connection} }) { return $con if($ivy{connection}{$con} == $handle); }
+		for my $con (keys %{ $ivy{connection} }) { return $con if($ivy{connection}{$con} == $handle); }
 		return 0;
 	},
 	connect => sub {

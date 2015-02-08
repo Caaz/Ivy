@@ -5,14 +5,14 @@ hook => {
 		my ($data,$tmp) = splice @_,0,2;
 		my $currentTime = time;
 		if($$tmp{lastTime}) {
-			foreach my $wTime ((($currentTime-$$tmp{lastTime}) > 1)?($$tmp{lastTime}..$currentTime):($currentTime)) {
-				foreach my $timer (@{ $$tmp{timer}{$wTime} }) { eval { $$timer{code}($wTime,@{ $$timer{args} }); } or warn $@; }
+			for my $wTime ((($currentTime-$$tmp{lastTime}) > 1)?($$tmp{lastTime}..$currentTime):($currentTime)) {
+				for my $timer (@{ $$tmp{timer}{$wTime} }) { eval { $$timer{code}($wTime,@{ $$timer{args} }); } or warn $@; }
 				delete $$tmp{timer}{$wTime};
 			}
 		}
 		$$tmp{lastTime} = $currentTime;
 	},
-	init => sub { %u = (); foreach $key (keys %{ $ivy{plugin} }) { $u{$key} = $ivy{plugin}{$key}{utilities} if $ivy{plugin}{$key}{utilities}; } } 
+	init => sub { %u = (); for $key (keys %{ $ivy{plugin} }) { $u{$key} = $ivy{plugin}{$key}{utilities} if $ivy{plugin}{$key}{utilities}; } } 
 },
 utilities => {
 	addTimer => sub { 
@@ -28,7 +28,7 @@ utilities => {
 		if((!$_[1]) && ($_[1] !~ /^\C{16}$/)) {
 			print "Bcrypt: Generating new salt." if $ivy{debug};
 			my @shaker = (32..126);
-			foreach(0..15) { $salt .= chr($shaker[rand(@shaker)]); }
+			for(0..15) { $salt .= chr($shaker[rand(@shaker)]); }
 		}
 		else { $salt = $_[1]; }
 		$bcrypt->cost(10);
