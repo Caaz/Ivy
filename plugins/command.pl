@@ -1,3 +1,4 @@
+%plugin = (
 required => 1,
 prereq => { plugins => ['user'] },
 hook => {
@@ -58,3 +59,4 @@ strings => {
 		}
 	}
 }
+);

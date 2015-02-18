@@ -1,3 +1,4 @@
+%plugin = (
 required => 1,
 hook => {
 	connect => sub {
@@ -80,3 +81,4 @@ utilities => {
 		return 1;
 	}
 }
+);

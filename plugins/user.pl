@@ -1,3 +1,4 @@
+%plugin = (
 required => 1,
 commands => {
 	'setName (?<name>.+)' => {
@@ -162,4 +163,5 @@ utilities => {
 		}
 		return -1;
 	}
-},
+}
+);

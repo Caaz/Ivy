@@ -1,3 +1,4 @@
+%plugin = (
 required => 1,
 prereq => { modules => ['Digest::Bcrypt','Digest'] },
 hook => {
@@ -45,3 +46,4 @@ utilities => {
 	},
 	stripCodes => sub { my $string = shift; $$string =~ s/\003\d{1,2}(?:\,\d{1,2})?|\02|\017|\003|\x16|\x09|\x13|\x0f|\x15|\x1f//g; }
 }
+);

@@ -1,14 +1,36 @@
 #!/usr/bin/perl
-use warnings; use strict; use Cwd 'abs_path'; use IO::Select; use IO::Socket; use JSON;
+use warnings;
+use strict;
+use Cwd 'abs_path';
+use IO::Select;
+use IO::Socket;
+use JSON;
 no warnings "experimental"; # You can't tell me how to live my life.
-my %ivy = ('debug'=>1, 'select'=>IO::Select->new()); my %u; goLocal(); load(); loadPlugins(); plugins(['load','begin','connect']);
+my %ivy = (
+	'debug'=>1,
+	'select'=>IO::Select->new()
+); 
+my %u;
+goLocal();
+load();
+loadPlugins();
+plugins(['load','begin','connect']);
 while(1) {
 	plugins(['tick']);
 	for my $fh ($ivy{select}->can_read(1)) {
 		my $rawmsg = readline($fh);
-		if(!$rawmsg) { plugins(['disconnected'],[$fh]); $ivy{select}->remove($fh); $fh->close; next; }
-		$rawmsg =~ s/\n|\r//g; plugins(['irc'],[$fh,$rawmsg]);
-		if($rawmsg =~ /^PING(.+)$/i) { raw($fh,"PONG$1"); save(); }
+		if(!$rawmsg) {
+			plugins(['disconnected'],[ $fh ]);
+			$ivy{select}->remove($fh);
+			$fh->close;
+			next;
+		}
+		$rawmsg =~ s/\n|\r//g; 
+		plugins(['irc'],[$fh,$rawmsg]);
+		if($rawmsg =~ /^PING(.+)$/i) { 
+			raw($fh,"PONG$1");
+			save();
+		}
 	}
 }
 sub loadPlugins {
@@ -17,13 +39,21 @@ sub loadPlugins {
 		mkdir($dir) if(!-e $dir);
 		print "Checking $dir\n" if $d;
 		for my $file (<$dir/*.pl>) {
-			my ($key,$time) = ($file, (stat($file))[9]); $key =~ s/.*[\\\/](.+).pl/$1/;
+			my ($key,$time) = ($file, (stat($file))[9]);
+			$key =~ s/.*[\\\/](.+).pl/$1/i;
 			if((!$ivy{lastUpdated}{$key}) || ($ivy{lastUpdated}{$key} != $time)) {
 				$ivy{lastUpdated}{$key} = $time;
-				print "- Loading $file\n" if $d; my %plugin;
-				open PLUGIN, "<$file"; eval('%plugin = ('.(join "", <PLUGIN>).');'); close PLUGIN;
-				if($@) { warn $@; push(@errors,{message=>$@,plugin=>$key}); }
-				else { print "- $key loaded.\n" if $d; $ivy{plugin}{$key} = \%plugin; }
+				print "- Loading $file\n" if $d; 
+				my %plugin = ();
+				open PLUGIN, "<$file"; eval(join "", <PLUGIN>); close PLUGIN;
+				if($@) { 
+					warn $@;
+					push(@errors,{message=>$@,plugin=>$key}); 
+				}
+				else { 
+					print "- $key loaded.\n" if $d; 
+					$ivy{plugin}{$key} = \%plugin; 
+				}
 			}
 		}
 	}

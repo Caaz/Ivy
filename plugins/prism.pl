@@ -1,3 +1,4 @@
+%plugin = (
 required => 1,
 commands => {
 	'setColors (?<colors>.+)' => {
@@ -105,3 +106,4 @@ utilities => {
 		return 1;
 	},
 }
+);

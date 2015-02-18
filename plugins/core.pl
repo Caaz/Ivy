@@ -1,3 +1,4 @@
+%plugin = (
 commands => {
 	'\!(?<code>.+)' => {
 		access => 3,
@@ -69,4 +70,5 @@ strings => {
 utilities => {
  reload => sub { save(); my $array = loadPlugins(); plugins(['load']); return $array; },
  refresh => sub { delete $ivy{lastUpdated}; delete $ivy{plugin}; save(); my $array = loadPlugins(); plugins(['load']); return $array; }
-},
+}
+);

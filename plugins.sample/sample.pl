@@ -1,3 +1,4 @@
+%plugin = (
 # The required key is entirely optional. If 1, when a dependency isn't met it'll kill the bot. The reason this key exists is for plugins like user, lots of things rely on it.
 required => 0,
 # This commands key is used by the command plugin. It's an easy way to set up commands.
@@ -143,4 +144,4 @@ strings => {
 			total => 'The sum of {a} and {b} is {total}!'
 		}
 	}
-}
+});
