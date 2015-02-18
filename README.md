@@ -19,7 +19,7 @@ After it's connected, you should then create a user account on the bot to gain a
 
 ##Commands
 ###user.pl
-command | usage
+Command | Description
 ------- | -----
 register **password** | Registers a new account tied to your nickname.
 login **password** | Logs into an account tied to your nickname.
@@ -28,7 +28,7 @@ setName **name** | Sets a name for your account.
 setPassword **password** | Sets a new password for your account.
 
 ###core.pl
-command | usage
+Command | Description
 ------- | -----
 meta | Displays amount of files, lines, and comments in the code.
 ! **some code** | Executes perl code.
@@ -36,7 +36,7 @@ reload | Reloads any modified plugins
 refresh | Reloads all plugins regardless of modified.
 
 ###prism.pl
-command | usage
+Command | Description
 ------- | -----
 setColors **Primary**,**Secondary** | Sets the colors for the current channel or user using numbers!
 setLanguage **locale** | Sets the language for the current channel or user using an en-us format.

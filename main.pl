@@ -27,10 +27,6 @@ while(1) {
 		}
 		$rawmsg =~ s/\n|\r//g; 
 		plugins(['irc'],[$fh,$rawmsg]);
-		if($rawmsg =~ /^PING(.+)$/i) { 
-			raw($fh,"PONG$1");
-			save();
-		}
 	}
 }
 sub loadPlugins {

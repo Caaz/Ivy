@@ -1,13 +1,19 @@
 %plugin = (
 required => 1,
 hook => {
+	tick => sub {
+		my ($data,$tmp) = splice @_,0,2;
+		foreach my $key (keys %{ $ivy{connection} }) {
+			if($$tmp{$key}++ > 500) {
+				die "PING TIMEOUT?!";
+			}
+		}
+	},
 	connect => sub {
 		my $data = shift;
 		if(!(keys %{ $data })) {
 			print "(network) You don't seem to have any networks set up. Let's create one.\n";
 			$u{network}{create}();
-			print "The rest of setup is handled via IRC. For more info tell Caaz to write a readme.\n";
-			print encode_json($data);
 		}
 		for $key (keys %{ $data }) { $u{network}{connect}($key); }
 	},
@@ -26,6 +32,7 @@ hook => {
 		elsif($msg =~ /^\:.+? INVITE .+? \:(.+)/i) { $u{network}{autojoinAdd}($handle,$network,$1); }
 		elsif($msg =~ /^\:.+? KICK (.+?) $$network{nickname} \:.+?$/i) { $u{network}{autojoinDel}($handle,$network,$1); }	
 		elsif((split /\s+/, $msg)[1] =~ /001/) { raw($handle,'JOIN '.(join ",",@{ $$network{autojoin} })) if($$network{autojoin}); }
+		elsif($msg =~ /^PING(.+)$/i) { raw($handle,"PONG$1"); $$tmp{$network} = 0; save(); }
 	}
 },
 utilities => {
