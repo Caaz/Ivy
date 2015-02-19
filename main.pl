@@ -16,7 +16,8 @@ load();
 loadPlugins();
 plugins(['load','begin','connect']);
 while(1) {
-	plugins(['tick']);
+	plugins(['tick']) if((!$ivy{tick}) || (time != $ivy{tick}));
+	$ivy{tick} = time;
 	for my $fh ($ivy{select}->can_read(1)) {
 		my $rawmsg = readline($fh);
 		if(!$rawmsg) {

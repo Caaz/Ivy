@@ -4,8 +4,12 @@ hook => {
 	tick => sub {
 		my ($data,$tmp) = splice @_,0,2;
 		foreach my $key (keys %{ $ivy{connection} }) {
-			if($$tmp{$key}++ > 500) {
-				die "PING TIMEOUT?!";
+			if($$tmp{$key}++ > 1500) {
+				# Right, we can't die within a plugin.
+				$ivy{select}->remove($ivy{connection}{$key});
+				$ivy{connection}{$key}->close;
+				delete $ivy{connection}{$key};
+				$u{network}{connect}($key);
 			}
 		}
 	},
@@ -24,7 +28,6 @@ hook => {
 	},
 	irc => sub {
 		my ($data,$tmp,$handle,$msg) = splice @_,0,4;
-		print "$msg\n";
 		my $network = $u{network}{valueByHandle}($handle);
 		if($msg =~ /^\:Nickserv\!.+? NOTICE .+ \:This nickname is registered/i) {
 			raw($handle,'PRIVMSG Nickserv :id '.$$network{nickserv}) if($$network{nickserv});
