@@ -11,6 +11,7 @@ my %ivy = (
 	'select'=>IO::Select->new()
 ); 
 my %u;
+eval("use Android"); if($@){ $ivy{os} = $^O; } else { $ivy{os} = "android"; eval('$ivy{droid} = Android->new();'); }
 goLocal();
 load();
 loadPlugins();
@@ -29,6 +30,7 @@ while(1) {
 		$rawmsg =~ s/\n|\r//g; 
 		plugins(['irc'],[$fh,$rawmsg]);
 	}
+	sleep 1 unless($ivy{select}->count);
 }
 sub loadPlugins {
 	my $d = ($ivy{debug}); my @errors;

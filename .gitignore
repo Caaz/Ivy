@@ -1,3 +1,4 @@
 *\.local/
 resources/
+data/
 *.json

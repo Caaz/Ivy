@@ -17,9 +17,10 @@ hook => {
 },
 utilities => {
 	addTimer => sub { 
-		my ($data,$tmp) = splice @_,0,2;
-		if($_[0] > time) { push(@{ $$tmp{timer}{$_[0]}}, $_[1]); return 1; } 
-		else { warn "Time value must be ahead of the current time!"; return 0; } 
+		my ($time,$timer) = splice @_,0,2;
+		my $tmp = $ivy{tmp}{utility};
+		if($time > time) { push(@{ $$tmp{timer}{$time}}, $timer); return 1; } 
+		else { warn "Time value must be ahead of the current time!"; return 0; }
 	},
 	bcrypt => sub {
 		# I: Data, Salt
